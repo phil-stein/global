@@ -29,7 +29,8 @@
 #endif
 
 
-// typedefs
+// ---- typedefs ----
+
 typedef char			          s8;
 typedef short			          s16;
 typedef int			            s32;
@@ -43,11 +44,12 @@ typedef unsigned long long	u64;
 typedef float 			        f32;
 typedef double			        f64;
 
-
 typedef void (empty_callback)(void);
 
-
 #define INLINE static inline __attribute( (always_inline) )
+
+
+// ---- helper ----
 
 #define FLAG(a) (1 << (a)) // aka. 2^a, 0, 2, 4, 8, ...
 
@@ -56,13 +58,13 @@ typedef void (empty_callback)(void);
 // &: 00000010 true bc. >1
 #define HAS_FLAG(a, b)   ((a) & (b))
 
-// print
 
 #define STR_VAR(v)  (#v)
 #define STR_BOOL(v) ((v) ? "true" : "false")
-#define SPRINTF(max, ...)  ASSERT(sprintf(__VA_ARGS__) < (max)) 
 
 #ifdef DEBUG
+
+// -- print --
 
 #define PF(...)		  printf(__VA_ARGS__)
 
@@ -82,6 +84,25 @@ typedef void (empty_callback)(void);
 #define ERRF(...)  P_ERRF(__VA_ARGS__); abort();
 #define ERR_CHECK(c, msg) if(!(c)) { ERR(msg); }
 #define ERR_CHECKF(c, ...) if(!(c)) { ERRF(__VA_ARGS__); }
+
+#define P_C_VERSION()                     \
+  if (__STDC_VERSION__ >=  201710L)       \
+  { PF("-- using c18 --\n"); }            \
+  else if (__STDC_VERSION__ >= 201112L)   \
+  { PF("-- using c11 --\n"); }            \
+  else if (__STDC_VERSION__ >= 199901L)   \
+  { PF("-- using c99 --\n"); }            \
+  else                                    \
+  { PF("-- using c89/c90 --\n"); }
+
+// -- func wrapper --
+
+#define SPRINTF(max, ...)  ASSERT(sprintf(__VA_ARGS__) < (max)) 
+
+#define MALLOC(s)          ASSERT(malloc(s) != NULL)
+#define CALLOC(n, s)       ASSERT(calloc(n, s) != NULL)
+#define REALLOC(p, s)      ASSERT(realloc(p, s) != NULL)
+#define FREE(n)            ASSERT(n != NULL); free(n)
 
 #elif
 
