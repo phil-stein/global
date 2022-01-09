@@ -85,6 +85,27 @@ typedef void (empty_callback)(void);
 #define ERR_CHECK(c, msg) if(!(c)) { ERR(msg); }
 #define ERR_CHECKF(c, ...) if(!(c)) { ERRF(__VA_ARGS__); }
 
+typedef enum pf_mode
+{
+  PF_NORMAL = 0,
+  PF_BOLD   = 1
+}pf_mode;
+typedef enum pf_color
+{
+  PF_BLACK    = 30,
+  PF_RED      = 31,
+  PF_GREEN    = 32,
+  PF_YELLOW0  = 33,
+  PF_BLUE     = 34,
+  PF_PURPLE   = 35,
+  PF_CYAN     = 36,
+  PF_WHITE    = 37 
+}pf_color;
+
+#define PF_MODE(style, color)    PF("\033[%d;%dm", style, color)
+#define PF_COLOR(color)          PF_MODE(PF_NORMAL, color)
+
+
 #define P_C_VERSION()                     \
   if (__STDC_VERSION__ >=  201710L)       \
   { PF("-- using c18 --\n"); }            \
@@ -99,7 +120,7 @@ typedef void (empty_callback)(void);
 
 #define SPRINTF(max, ...)  ASSERT(sprintf(__VA_ARGS__) < (max)) 
 
-#define MALLOC(s)          ASSERT(malloc(s) != NULL)
+#define MALLOC(a, s)       {(a) = malloc(s); ASSERT((a) != NULL); }
 #define CALLOC(n, s)       ASSERT(calloc(n, s) != NULL)
 #define REALLOC(p, s)      ASSERT(realloc(p, s) != NULL)
 #define FREE(n)            ASSERT(n != NULL); free(n)
