@@ -87,15 +87,20 @@ typedef void (empty_callback)(void);
 
 typedef enum pf_mode
 {
-  PF_NORMAL = 0,
-  PF_BOLD   = 1
+  PF_NORMAL     = 0,
+  PF_BOLD       = 1,    // bright
+  PF_DIM        = 2,
+  PF_ITALIC     = 3,
+  PF_UNDERLINE  = 4,
+  PF_REVERSE    = 5,
+  PF_HIDDEN     = 6
 }pf_mode;
 typedef enum pf_color
 {
   PF_BLACK    = 30,
   PF_RED      = 31,
   PF_GREEN    = 32,
-  PF_YELLOW0  = 33,
+  PF_YELLOW   = 33,
   PF_BLUE     = 34,
   PF_PURPLE   = 35,
   PF_CYAN     = 36,
