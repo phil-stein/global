@@ -95,7 +95,7 @@ typedef enum pf_mode
   PF_REVERSE    = 5,
   PF_HIDDEN     = 6
 }pf_mode;
-typedef enum pf_color
+typedef enum pf_fg
 {
   PF_BLACK    = 30,
   PF_RED      = 31,
@@ -106,9 +106,21 @@ typedef enum pf_color
   PF_CYAN     = 36,
   PF_WHITE    = 37 
 }pf_color;
+typedef enum pf_bg
+{
+  PF_BG_BLACK    = 40,
+  PF_BG_RED      = 41,
+  PF_BG_GREEN    = 42,
+  PF_BG_YELLOW   = 43,
+  PF_BG_BLUE     = 44,
+  PF_BG_PURPLE   = 45,
+  PF_BG_CYAN     = 46,
+  PF_BG_WHITE    = 47 
+}pf_bg;
 
-#define PF_MODE(style, color)    PF("\033[%d;%dm", style, color)
-#define PF_COLOR(color)          PF_MODE(PF_NORMAL, color)
+#define PF_MODE(style, fg, bg)   PF("\033[%d;%d;%dm", style, fg, bg)
+#define PF_STYLE(style, color)   PF("\033[%d;%dm", style, color)
+#define PF_COLOR(color)          PF_STYLE(PF_NORMAL, color)
 
 
 #define P_C_VERSION()                     \
