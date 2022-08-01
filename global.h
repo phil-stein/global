@@ -119,8 +119,9 @@ typedef enum pf_bg
 }pf_bg;
 
 #define PF_MODE(style, fg, bg)   PF("\033[%d;%d;%dm", style, fg, bg)
-#define PF_STYLE(style, color)   PF("\033[%d;%dm", style, color)
-#define PF_COLOR(color)          PF_STYLE(PF_NORMAL, color)
+#define PF_STYLE_COL(style, fg)  PF("\033[%d;%dm", style, fg)
+#define PF_STYLE(style)          PF("\033[%dm", style)
+#define PF_COLOR(color)          PF_STYLE_COL(PF_NORMAL, color)
 
 
 #define P_C_VERSION()                     \
