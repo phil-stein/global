@@ -1,10 +1,6 @@
 #ifndef GLOBAL_STR_UTIL_H
 #define GLOBAL_STR_UTIL_H
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
 
 
 // @NOTE: need to define STR_UTIL_IMPLEMENTATION once before including 
@@ -16,15 +12,27 @@ extern "C"
 #include <string.h>
 #include <math.h>   // abs()
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // @DOC: find last occurance of str
 char* str_util_find_last_of(char* str, char* identifier);
 // @DOC: truncate str at pos
 char* str_util_trunc(char* str, int pos);
 
+#ifdef __cplusplus
+} // extern C
 #endif
+#endif  // GLOBAL_STR_UTIL_H
 
 // @DOC: need to define this once before including 
 #ifdef STR_UTIL_IMPLEMENTATION
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 
 char* str_util_find_last_of(char* str, char* identifier)
 {
@@ -64,4 +72,4 @@ char* str_util_trunc(char* str, int pos)
 } // extern C
 #endif
 
-#endif
+#endif  // STR_UTIL_IMPLEMENTATION

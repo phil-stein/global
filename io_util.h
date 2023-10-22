@@ -1,10 +1,12 @@
 #ifndef GLOBAL_IO_UTIL_H
 #define GLOBAL_IO_UTIL_H
 
+
+
 #ifdef __cplusplus
-extern "C"
-{
+extern "C" {
 #endif
+
 
 // @NOTE: need to define IO_UTIL_IMPLEMENTATION once before including 
 //        #define IO_UTIL_IMPLEMENTATION
@@ -16,13 +18,20 @@ extern "C"
 //       h: gets set to console height
 void io_util_get_console_size_win(int* w, int* h);
 
-
+#ifdef __cplusplus
+} // extern C
 #endif
+
+#endif  // GLOBAL_IO_UTIL_H
 
 // @DOC: need to define this once before including 
 #ifdef IO_UTIL_IMPLEMENTATION
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #include <windows.h>
+
 
 void io_util_get_console_size_win(int* w, int* h)
 {
@@ -37,4 +46,4 @@ void io_util_get_console_size_win(int* w, int* h)
 } // extern C
 #endif
 
-#endif
+#endif  // IO_UTIL_IMPLEMENTATION

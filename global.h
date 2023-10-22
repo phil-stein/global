@@ -1,10 +1,5 @@
-#ifndef GLOABL_GLOBAL_H
-#define GLOABL_GLOBAL_H
-
-#ifdef __cplusplus
-extern "C"
-{
-#endif
+#ifndef GLOBAL_GLOBAL_H
+#define GLOBAL_GLOBAL_H
 
 
 // include all files like this once and the only use global.h
@@ -28,6 +23,12 @@ extern "C"
 #include <math.h>
 #include <assert.h>
 #include <inttypes.h>
+
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 
 
 
