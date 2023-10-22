@@ -1,6 +1,12 @@
 #ifndef GLOBAL_STR_UTIL_H
 #define GLOBAL_STR_UTIL_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+
 // @NOTE: need to define STR_UTIL_IMPLEMENTATION once before including 
 //        #define STR_UTIL_IMPLEMENTATION
 //        #include "str_util.h"
@@ -53,5 +59,9 @@ char* str_util_trunc(char* str, int pos)
 
     return str;
 }
+
+#ifdef __cplusplus
+} // extern C
+#endif
 
 #endif

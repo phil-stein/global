@@ -1,6 +1,11 @@
 #ifndef GLOBAL_IO_UTIL_H
 #define GLOBAL_IO_UTIL_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 // @NOTE: need to define IO_UTIL_IMPLEMENTATION once before including 
 //        #define IO_UTIL_IMPLEMENTATION
 //        #include "io_util.h"
@@ -27,5 +32,9 @@ void io_util_get_console_size_win(int* w, int* h)
   *w = csbi.srWindow.Right - csbi.srWindow.Left + 1;
   *h = csbi.srWindow.Bottom - csbi.srWindow.Top + 1;
 }
+
+#ifdef __cplusplus
+} // extern C
+#endif
 
 #endif

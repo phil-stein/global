@@ -1,6 +1,11 @@
 #ifndef GLOABL_GLOBAL_H
 #define GLOABL_GLOBAL_H
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
 
 // include all files like this once and the only use global.h
 // // order is important, io_util & str_util before global
@@ -353,5 +358,9 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 
 #endif // GLOBAL_DEBUG
 
+
+#ifdef __cplusplus
+} // extern C
+#endif
 
 #endif
