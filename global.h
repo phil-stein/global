@@ -39,11 +39,13 @@ extern "C" {
 
 // -- bool --
 #ifndef GLOBAL_BOOL_TYPE
-  #define GLOBAL_BOOL_TYPE int
+  #define GLOBAL_BOOL_TYPE char
 #endif
 
 #ifndef bool
 	#define bool GLOBAL_BOOL_TYPE
+#else
+  ERROR(bool predefined)
 #endif
 #ifndef true
 	#define true 1
@@ -55,6 +57,7 @@ extern "C" {
 
 // ---- typedefs ----
 
+// @UNSURE: use int32_t etc.
 typedef char			          s8;
 typedef short			          s16;
 typedef int			            s32;
