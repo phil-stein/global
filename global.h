@@ -209,6 +209,7 @@ typedef enum pf_bg
 #define P_U8(v)       P_UNSIGNED(v)
 
 #define P_F32(v) 	    PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %f\n", (v)); PF_IF_LOC()
+#define P_F64(v) 	    P_F32(v) 
 // #define P_U64(u)   printf("|%s| %llu\n", #u, u)
 
 #define P_BOOL(v) 	  PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %s\n", STR_BOOL(v)); PF_IF_LOC()
