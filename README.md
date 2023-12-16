@@ -1,5 +1,7 @@
 # global
-typedefs & macros i use in almost all projects
+typedefs & macros i use in almost all projects <br>
+for in terminal documentation see [term_docs](https://github.com/phil-stein/term_docs.git)
+
 
 ## global.h
 
