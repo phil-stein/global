@@ -189,8 +189,19 @@ typedef enum pf_bg
 // @DOC: draw --- line as long as the current console is wide, only works on windows
 #if defined( _WIN32 )
 #define P_LINE()    { int w, h; io_util_get_console_size_win(&w, &h); for (int i = 0; i < w -1; ++i) { _PF("-"); } _PF("\n"); }
+
+#define P_LINE_STR(_str)                                                  \
+                        {                                                 \
+                          int w, h; io_util_get_console_size_win(&w, &h); \
+                          PF("%s", (_str));                               \
+                          int i = strlen((_str)) +2;                      \
+                          while( i < w -1) { _PF("-"); i++; }             \
+                          PF("\n");                                       \
+                        }
+
 #else
-#define P_LINE()    P_ERR("P_LINE() currently only supported in windows")
+#define P_LINE()          P_ERR("P_LINE() currently only supported in windows")
+#define P_LINE_STR(_str)  P_ERR("P_LINE_STR() currently only supported in windows")                                                
 #endif
 
 // -- print variables --
