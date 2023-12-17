@@ -49,6 +49,7 @@ char* str_util_find_last_of(char* str, char* identifier)
     return last;
 }
 
+// https://www.delftstack.com/howto/c/truncate-string-in-c/
 char* str_util_trunc(char* str, int pos)
 {
     int len = strlen(str);

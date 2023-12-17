@@ -175,6 +175,7 @@ typedef enum pf_bg
 // @DOC: print location, as in file and line, append anywhere that info is usefull
 #define P_LOCATION() PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); _PF(" -> file: %s, line: %d\n", __FILE__, __LINE__); PF_STYLE_RESET()
 // @DOC: print location on all P_ macros or not
+//       PF_IF_LOC() used in P/PF macros
 // #define PF_PRINT_LOCATION
 #ifdef PF_PRINT_LOCATION
   #define PF_IF_LOC() P_LOCATION() 
@@ -190,11 +191,15 @@ typedef enum pf_bg
 #if defined( _WIN32 )
 #define P_LINE()    { int w, h; io_util_get_console_size_win(&w, &h); for (int i = 0; i < w -1; ++i) { _PF("-"); } _PF("\n"); }
 
-#define P_LINE_STR(_str)                                                  \
+// @DOC: draw formatted string followed by line as wide as console
+//       example: P_LINE_STR("hello"); P_LINE_STR("str: %s", str);
+#define P_LINE_STR(...)                                                   \
                         {                                                 \
+                          char buf[248];                                  \
+                          SPRINTF(248, buf, __VA_ARGS__);                 \
                           int w, h; io_util_get_console_size_win(&w, &h); \
-                          PF("%s", (_str));                               \
-                          int i = strlen((_str)) +2;                      \
+                          PF("%s", buf);                                  \
+                          int i = strlen(buf) +2;                         \
                           while( i < w -1) { _PF("-"); i++; }             \
                           PF("\n");                                       \
                         }
@@ -205,7 +210,6 @@ typedef enum pf_bg
 #endif
 
 // -- print variables --
-
 
 // @DOC: print the different types, e.g. P_INT(variable), highlights variable name cyan
 #define P_SIGNED(v) 	PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %d\n", (v)); PF_IF_LOC()
@@ -291,7 +295,7 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define MALLOC(ptr, size)        (ptr) = malloc(size);        ASSERT((ptr) != NULL)     
 #define CALLOC(ptr, items, size) (ptr) = calloc(items, size); ASSERT((ptr) != NULL)     
 #define REALLOC(ptr, size)       (ptr) = realloc(ptr, size);  ASSERT((ptr) != NULL)     
-#define FREE(ptr)                ASSERT(ptr != NULL); free(ptr)                         
+#define FREE(ptr)                ASSERT(ptr != NULL); free(ptr); ptr = NULL 
 
 // stb_ds
 #define ARRFREE(a)               arrfree((a)); (a) = NULL  
