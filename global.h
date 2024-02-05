@@ -184,7 +184,8 @@ typedef enum pf_bg
 
 #define PF(...)		  printf(__VA_ARGS__); PF_IF_LOC()                                                      // @DOC: printf
 #define P(msg)		  _PF("%s\n", msg); PF_IF_LOC()                                                         // @DOC: pritnf with automatic \n
-#define P_INFO(msg) PF_COLOR(PF_YELLOW); _PF("[INFO] "); PF_STYLE_RESET(); _PF("%s\n", msg); P_LOCATION() // @DOC: P(), but always prints location
+// #define P_INFO(msg) PF_COLOR(PF_YELLOW); _PF("[INFO] "); PF_STYLE_RESET(); _PF("%s\n", msg); P_LOCATION() // @DOC: P(), but always prints location
+#define P_INFO(...) PF_COLOR(PF_YELLOW); _PF("[INFO] "); PF_STYLE_RESET(); _PF(__VA_ARGS__); P_LOCATION() // @DOC: P(), but always prints location
 
 // @DOC: draw --- line as long as the current console is wide, only works on windows
 #if defined( _WIN32 )
