@@ -111,7 +111,7 @@ typedef void (empty_callback)(void);
 #define PASTE(a, b)           a##b
 #define PASTE_2(a, b)         PASTE(a, b)
 #define PASTE_3(a, b, c)      PASTE_2(PASTE_2(a, b), c)
-#define PASTE_4(a, b, c, d)   PASTE_3(PASTE_3(a, b, c), d)
+#define PASTE_4(a, b, c, d)   PASTE_2(PASTE_3(a, b, c), d)
 
 
 // @DOC: ifdef activates P... macros, ASSERT, ERR..., etc.
@@ -251,6 +251,36 @@ typedef enum pf_bg
 #define P_LOC_STR(v) 	P_STR(v);  P_LOCATION() 
 #define P_LOC_TXT(v)  P_TXT(v);  P_LOCATION()    
 #define P_LOC_PTR(v)  P_PTR(v);  P_LOCATION()
+
+// binary
+
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)   \
+  ((byte) & 0x80 ? '1' : '0'), \
+  ((byte) & 0x40 ? '1' : '0'), \
+  ((byte) & 0x20 ? '1' : '0'), \
+  ((byte) & 0x10 ? '1' : '0'), \
+  ((byte) & 0x08 ? '1' : '0'), \
+  ((byte) & 0x04 ? '1' : '0'), \
+  ((byte) & 0x02 ? '1' : '0'), \
+  ((byte) & 0x01 ? '1' : '0') 
+
+// @DOC: print u8/s8 as binary without name 
+#define PF_BIN8(v)  printf(""BYTE_TO_BINARY_PATTERN"\n", BYTE_TO_BINARY(v)); 
+
+// @DOC: print u16/s16 as binary with name 
+#define P_BIN8(v)   PF_COLOR(PF_CYAN); printf("%s", #v); PF_STYLE_RESET(); printf(": "); PF_BIN8(v); PF_IF_LOC();
+// @DOC: print u16/s16 as binary without name 
+#define PF_BIN16(v)  printf(""BYTE_TO_BINARY_PATTERN"."BYTE_TO_BINARY_PATTERN"\n", \
+                     BYTE_TO_BINARY(v>>8), BYTE_TO_BINARY(v)); 
+
+// @DOC: print u16/s16 as binary with name 
+#define P_BIN16(v)   PF_COLOR(PF_CYAN); printf("%s", #v); PF_STYLE_RESET(); printf(": "); PF_BIN16(v); PF_IF_LOC();
+// @DOC: print u32/s32 as binary without name 
+#define PF_BIN32(v)  printf(""BYTE_TO_BINARY_PATTERN"."BYTE_TO_BINARY_PATTERN"."BYTE_TO_BINARY_PATTERN"."BYTE_TO_BINARY_PATTERN"\n", \
+                     BYTE_TO_BINARY(v>>24), BYTE_TO_BINARY(v>>16), BYTE_TO_BINARY(v>>8), BYTE_TO_BINARY(v)); 
+// @DOC: print u32/s32 as binary with name 
+#define P_BIN32(v)   PF_COLOR(PF_CYAN); printf("%s", #v); PF_STYLE_RESET(); printf(": "); PF_BIN32(v); PF_IF_LOC();
 
 // -- debug --
 
