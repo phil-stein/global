@@ -199,7 +199,7 @@ typedef enum pf_bg
                           char buf[248];                                  \
                           SPRINTF(248, buf, __VA_ARGS__);                 \
                           int w, h; io_util_get_console_size_win(&w, &h); \
-                          PF("%s", buf);                                  \
+                          _PF("%s", buf); /* no location */               \
                           int i = strlen(buf) +2;                         \
                           while( i < w -1) { _PF("-"); i++; }             \
                           PF("\n");                                       \
@@ -252,7 +252,7 @@ typedef enum pf_bg
 #define P_LOC_TXT(v)  P_TXT(v);  P_LOCATION()    
 #define P_LOC_PTR(v)  P_PTR(v);  P_LOCATION()
 
-// binary
+// --- binary ---
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)   \
