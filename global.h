@@ -19,6 +19,7 @@
 // libs needed basically everywhere
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <math.h>
 #include <assert.h>
@@ -57,19 +58,28 @@ extern "C" {
 
 // ---- typedefs ----
 
-// @UNSURE: use int32_t etc.
-typedef char			          s8;
-typedef short			          s16;
-typedef int			            s32;
-typedef long long		        s64;
+// // @UNSURE: use int32_t etc.
+// typedef char			          s8;
+// typedef short			          s16;
+// typedef int			            s32;
+// typedef long long		        s64;
+// 
+// typedef unsigned char		    u8;
+// typedef unsigned short		  u16;
+// typedef unsigned int 		    u32;
+// typedef unsigned long	long  u64;
+typedef int8_t      s8;
+typedef int16_t     s16;
+typedef int32_t     s32;
+typedef int64_t 		s64;
 
-typedef unsigned char		    u8;
-typedef unsigned short		  u16;
-typedef unsigned int 		    u32;
-typedef unsigned long	long  u64;
+typedef uint8_t     u8;
+typedef uint16_t    u16;
+typedef uint32_t    u32;
+typedef uint64_t    u64;
 
-typedef float 			        f32;
-typedef double			        f64;
+typedef float 			f32;
+typedef double			f64;
 
 typedef void (empty_callback)(void);
 
