@@ -58,7 +58,8 @@ extern "C" {
 
 // ---- typedefs ----
 
-// // @UNSURE: use int32_t etc.
+// @DOC: int, long, etc. not guaranteed to be excactly 32/64 bit
+//       int32_t/uint64_t etc is
 // typedef char			          s8;
 // typedef short			          s16;
 // typedef int			            s32;
