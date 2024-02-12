@@ -35,6 +35,8 @@ extern "C" {
 
 void io_util_get_console_size_win(int* w, int* h)
 {
+  TRACE();
+
   CONSOLE_SCREEN_BUFFER_INFO csbi;
 
   GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);

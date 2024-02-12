@@ -5,7 +5,6 @@
 
 // @NOTE: need to define BUMP_ALLOC_IMPLEMENTATION once before including 
 //        #define BUMP_ALLOC_IMPLEMENTATION
-//        #define BUMP_ALLOC_SIZE 1024
 //        #include "bump_alloc.h"
 
 #include "global.h"
@@ -16,16 +15,42 @@ extern "C"
 {
 #endif
 
-#ifndef BUMP_ALLOC_SIZE
-  #define BUMP_ALLOC_SIZE 512
-#endif
+// #ifndef BUMP_ALLOC_SIZE
+//   #define BUMP_ALLOC_SIZE 512
+// #endif
 
 typedef struct
 {
-  u8 data[BUMP_ALLOC_SIZE];
+  u8* data;
+  u32 size;
   u32 pos;
 
 }bump_alloc_t;
+
+
+// @DOC: initializes bump_allocator to specified size
+//       ! needs to be free'd using bump_free()
+//       reset for reusage using bump_reset()
+void bump_init_dbg(bump_alloc_t* alloc, u32 size, const char* _file, const int _line);
+#define bump_init(_alloc, _size) bump_init_dbg(_alloc, _size, __FILE__, __LINE__)
+
+// @DOC: returns pointer to memory in pre-allocated bump-memory
+//       ! need to call bump_init() first
+//       reset for reusage using bump_reset()
+void* bump_alloc_dbg(bump_alloc_t* alloc, u32 size, const char* _file, const int _line);
+#define bump_alloc(_alloc, _size) bump_alloc_dbg(_alloc, _size, __FILE__, __LINE__)
+
+// @DOC: reset the bump allocator for reusage
+//       ! doesnt free just resets to be overwritten by next bump_alloc()
+//       ! use bump_free() to actually free
+void bump_reset_dbg(bump_alloc_t* alloc, const char* _file, const int _line);
+#define bump_reset(_alloc) bump_reset_dbg(_alloc, __FILE__, __LINE__)
+
+// @DOC: frees memory allocated in bump_init()
+//       ! after calling this need ti call bump_init(), 
+//         before calling bump_alloc() again
+void bump_free_dbg(bump_alloc_t* alloc, const char* _file, const int _line);
+#define bump_free(_alloc) bump_free_dbg(_alloc, __FILE__, __LINE__)
 
 #ifdef __cplusplus
 } // extern C
@@ -41,22 +66,57 @@ extern "C"
 {
 #endif
 
-bump_alloc_t alloc;
+// @TODO: inline these
 
-void* bump_alloc(u32 size)
+void bump_init_dbg(bump_alloc_t* alloc, u32 size, const char* _file, const int _line)
 {
-  if (alloc.pos + size < BUMP_ALLOC_SIZE)
+  TRACE();
+
+  ERR_CHECK(alloc != NULL,       "alloc is null pointer\n\t->file. %s, line: %d\n", _file, _line);
+  ERR_CHECK(alloc->data == NULL, "alloc->data isnt null pointer\n\t->file. %s, line: %d\n", _file, _line);
+  ERR_CHECK(size > 0,            "size needs to be bigger than 0\n\t->file. %s, line: %d\n", _file, _line);
+
+  MALLOC(alloc->data, size);
+  alloc->size = size;
+  alloc->pos  = 0;
+}
+
+void* bump_alloc_dbg(bump_alloc_t* alloc, u32 size, const char* _file, const int _line)
+{
+  TRACE();
+
+  ERR_CHECK(alloc != NULL,       "alloc is null pointer\n\t->file. %s, line: %d\n", _file, _line);
+  ERR_CHECK(alloc->data != NULL, "alloc->data is null pointer, call bump_init() first\n\t->file. %s, line: %d\n", _file, _line);
+
+  if (alloc->pos + size < BUMP_ALLOC_SIZE)
   {
     // @UNSURE: set memory to 0
-    alloc.pos += size;
-    return &alloc.data[pos];
+    alloc->pos += size;
+    return &alloc->data[alloc->pos];
   }
+  ERR("bump_alloc ran out of memory\n\t->file. %s, line: %d\n", _file, _line);
   return NULL;
 }
 
-void bump_free()
+void bump_reset_dbg(bump_alloc_t* alloc, const char* _file, const int _line)
 {
-  alloc.pos = 0;
+  TRACE();
+
+  ERR_CHECK(alloc != NULL, "alloc is null pointer\n\t->file. %s, line: %d\n", _file, _line);
+  alloc->pos = 0;
+}
+
+void bump_free_dbg(bump_alloc_t* alloc, const char* _file, const int _line)
+{
+  TRACE();
+
+  ERR_CHECK(alloc != NULL,       "alloc is null pointer\n\t->file. %s, line: %d\n", _file, _line);
+  ERR_CHECK(alloc->data != NULL, "alloc->data is null pointer, call bump_init() first\n\t->file. %s, line: %d\n", _file, _line);
+
+  FREE(alloc->data);
+  alloc->data = NULL;
+  alloc->size = 0;
+  alloc->pos  = 0;
 }
 
 #ifdef __cplusplus

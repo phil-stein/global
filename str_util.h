@@ -36,6 +36,8 @@ extern "C"
 
 char* str_util_find_last_of(char* str, char* identifier)
 {
+  TRACE();
+
     char* last = NULL;
     int n = strlen(identifier);
     while (*str)
@@ -52,6 +54,8 @@ char* str_util_find_last_of(char* str, char* identifier)
 // https://www.delftstack.com/howto/c/truncate-string-in-c/
 char* str_util_trunc(char* str, int pos)
 {
+  TRACE();
+
     int len = strlen(str);
 
     if (len > abs(pos)) 

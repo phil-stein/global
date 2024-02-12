@@ -12,9 +12,8 @@
 // #include "global/global.h"
 
 
-// util headers in this repo
-#include "io_util.h"  // needs  IO_UTIL_IMPLEMENTATION defined ONCE
-#include "str_util.h" // needs STR_UTIL_IMPLEMENTATION defined ONCE
+// other headers in this repo, included at end of file, 
+// bc. they need the defines made in global.h
 
 // libs needed basically everywhere
 #include <stdio.h>
@@ -184,7 +183,7 @@ typedef enum pf_bg
 // -- print --
 
 // @DOC: print location, as in file and line, append anywhere that info is usefull
-#define P_LOCATION() PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); _PF(" -> file: %s, line: %d\n", __FILE__, __LINE__); PF_STYLE_RESET()
+#define P_LOCATION() PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); _PF(" -> file: %s\n -> func: %s, line: %d\n", __FILE__, __func__, __LINE__); PF_STYLE_RESET()
 // @DOC: print location on all P_ macros or not
 //       PF_IF_LOC() used in P/PF macros
 // #define PF_PRINT_LOCATION
@@ -193,6 +192,9 @@ typedef enum pf_bg
 #else
   #define PF_IF_LOC()
 #endif
+
+
+
 
 #define PF(...)		  printf(__VA_ARGS__); PF_IF_LOC()                                                      // @DOC: printf
 #define P(msg)		  _PF("%s\n", msg); PF_IF_LOC()                                                         // @DOC: pritnf with automatic \n
@@ -327,6 +329,111 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
   else                                    \
   { PF("-- using c89/c90 --\n"); }
 
+// -- trace --
+
+// @NOTE: need to define 
+//        TRACE_PRINT_LOCATION (-DTRACE_PRINT_LOCATION)
+//        TRACE_LOG_PATH       (-DTRACE_LOG_PATH=\"trace.log\")
+//        TRACE_LOG_MAX_LINES  (-DTRACE_LOG_MAX_LINES=20) 
+//        ! globally
+
+#ifdef TRACE_PRINT_LOCATION 
+
+  // @DOC: how many chars max in line of trace log text
+  #define TRACE_LOG_LINE_MAX 256
+  // @DOC: how many lines in trace log text
+  // #define TRACE_LOG_MAX_LINES 25
+  
+  // @DOC: file used for printig trace log to
+  //       fopened in TRACE_INIT()
+  extern FILE* __global_trace_file_pointer__;
+  extern char  __global_trace_file_entries__[TRACE_LOG_MAX_LINES][TRACE_LOG_LINE_MAX];
+  extern char* __global_trace_file_entry_ptrs__[TRACE_LOG_MAX_LINES];
+  
+  // @DOC:  calls init func defined in TRACE_REGISTER()
+  #define TRACE_INIT_NAME  __global_trace_init__
+  #define TRACE_INIT()     TRACE_INIT_NAME()
+  
+  // @DOC: defines function and extern FILE* used for writing trace log to file
+  //       need to call TRACE_INIT() as well
+  #define TRACE_REGISTER()                                                            \
+    /* define extern FILE*, used for printting trace log to */                        \
+    FILE* __global_trace_file_pointer__ = NULL;                                       \
+    char  __global_trace_file_entries__[TRACE_LOG_MAX_LINES][TRACE_LOG_LINE_MAX];     \
+    char* __global_trace_file_entry_ptrs__[TRACE_LOG_MAX_LINES];                      \
+                                                                                      \
+    void TRACE_INIT_NAME()                                                            \
+    {                                                                                 \
+      __global_trace_file_pointer__ = fopen(TRACE_LOG_PATH, "w+");                    \
+      if(__global_trace_file_pointer__ == NULL)                                       \
+      { ERR("couldnt open trace log file: %s\n", TRACE_LOG_PATH); }                   \
+      /* rewind(__global_trace_file_pointer__);  / * set to beginnning of file */     \
+      for (int i = 0; i < TRACE_LOG_MAX_LINES; ++i)                                   \
+      { __global_trace_file_entry_ptrs__[i] =  __global_trace_file_entries__[i]; }    \
+    }
+
+  #define TRACE() __global_trace_func(__func__, __FILE__, __LINE__) 
+  INLINE void __global_trace_func(const char* _func, const char* _file, const int _line) 
+  {                                                                                     
+    /* move lines around */                                                             
+    __global_trace_file_entry_ptrs__[0] = __global_trace_file_entry_ptrs__[TRACE_LOG_MAX_LINES -1]; 
+    
+    for (int i = TRACE_LOG_MAX_LINES -1; i > 0; --i)                                            
+    { 
+      __global_trace_file_entry_ptrs__[i] = __global_trace_file_entry_ptrs__[i -1]; 
+    }           
+  
+    sprintf(__global_trace_file_entry_ptrs__[0], 
+        "%s, line: %d, file: %s\n",
+        _func, _line, _file);                 
+ 
+    // go to start of file, to overwrite
+    // should work i think, but doesnt
+    rewind(__global_trace_file_pointer__);  // set fprintf to beginnning of file 
+    // fseek(__global_trace_file_pointer__, 0, SEEK_SET);
+    // // super slow, but only this works
+    // __global_trace_file_pointer__ = freopen(TRACE_LOG_PATH, "w", __global_trace_file_pointer__);
+    // ASSERT(__global_trace_file_pointer__ != NULL);                                              
+    
+    // P_INT((int)ftell(__global_trace_file_pointer__));
+   
+    if (ftell(__global_trace_file_pointer__) != 0)
+    {
+      __global_trace_file_pointer__ = freopen(TRACE_LOG_PATH, "w", __global_trace_file_pointer__);
+      ASSERT(__global_trace_file_pointer__ != NULL);                                              
+    }
+
+    for (int i = TRACE_LOG_MAX_LINES -1; i >= 0; --i)                                           
+    { 
+      // fprintf(__global_trace_file_pointer__, "%s\n", __global_trace_file_entry_ptrs__[i]); 
+      fputs(__global_trace_file_entry_ptrs__[i], __global_trace_file_pointer__); 
+      // fwrite(__global_trace_file_entry_ptrs__[i], sizeof(char), TRACE_LOG_LINE_MAX, __global_trace_file_pointer__); 
+    }            
+    // // fill rest of space
+    
+    // cop out, just putting bit of space between logs and garbage
+    fputs("\n\n\n\n\n", __global_trace_file_pointer__); 
+    
+    // #define SPACE "          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          ""          "
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // fwrite(SPACE, sizeof(char), 200, __global_trace_file_pointer__); 
+    // #undef SPACE
+
+  }
+
+#else   // TRACE_PRINT_LOCATION
+  #define TRACE_INIT()   
+  #define TRACE_REGISTER()
+  #define TRACE()
+#endif  // TRACE_PRINT_LOCATION
+
 // -- func wrapper --
 
 // @DOC: wrappers around standard functions to make the safer, can be compiled out
@@ -424,5 +531,10 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #ifdef __cplusplus
 } // extern C
 #endif
+
+// util headers in this repo
+#include "io_util.h"    // needs IO_UTIL_IMPLEMENTATION    defined ONCE
+#include "str_util.h"   // needs STR_UTIL_IMPLEMENTATION   defined ONCE
+#include "bump_alloc.h" // needs BUMP_ALLOC_IMPLEMENTATION defined ONCE
 
 #endif
