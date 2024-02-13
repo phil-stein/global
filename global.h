@@ -4,11 +4,21 @@
 
 // include all files like this once and the only use global.h
 // // order is important, io_util & str_util before global
+// 
 // #define IO_UTIL_IMPLEMENTATION       // only define once
 // #include "global/io_util.h"          // only need to include here, normally included via global.h
+// 
 // #define STR_UTIL_IMPLEMENTATION      // only define once
 // #include "global/str_util.h"         // only need to include here, normally included via global.h
-// #define GLOBAL_BOOL_TYPE int/u8/etc. // optional is int by default
+// 
+// for printing macros, define globally:
+//  GLOBAL_DEBUG          (-DGLOBAL_DEBUG)                  : compile in/out P/PF/P_ macros
+//  PF_PRINT_LOCATION     (-DPF_PRINT_LOCATION)             : make P/PF/P_ macros print location
+// for tracing, define globally:
+//  TRACE_PRINT_LOCATION  (-DTRACE_PRINT_LOCATION)          : compile in TRACE macros
+//  TRACE_LOG_PATH        (-DTRACE_LOG_PATH=\"trace.log\")  : path/name of trace log file
+//  TRACE_LOG_MAX_LINES   (-DTRACE_LOG_MAX_LINES=20)        : max lines output to log file
+// #define GLOBAL_BOOL_TYPE int/u8/etc. // optional is char by default
 // #include "global/global.h"
 
 
