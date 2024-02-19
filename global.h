@@ -519,6 +519,10 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define GLOBAL_TEST_P_MACROS()
 #define P_C_VERSION()                     
 
+// -- tracing --
+
+#define TRACE()
+
 // -- func wrapper --
 
 #define SPRINTF(max, ...)  sprintf(__VA_ARGS__) 
