@@ -18,6 +18,7 @@
 //  TRACE_PRINT_LOCATION  (-DTRACE_PRINT_LOCATION)          : compile in TRACE macros
 //  TRACE_LOG_PATH        (-DTRACE_LOG_PATH=\"trace.log\")  : path/name of trace log file
 //  TRACE_LOG_MAX_LINES   (-DTRACE_LOG_MAX_LINES=20)        : max lines output to log file
+// globally define GLOBAL_DEFINE_BOOL to reassign bool (-DGLOBAL_DEFINE_BOOL)
 // #define GLOBAL_BOOL_TYPE int/u8/etc. // optional is char by default
 // #include "global/global.h"
 
@@ -30,6 +31,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdbool.h>
 #include <math.h>
 #include <assert.h>
 #include <inttypes.h>
@@ -52,15 +54,10 @@ extern "C" {
   #define GLOBAL_BOOL_TYPE char
 #endif
 
-#ifndef bool
-	#define bool GLOBAL_BOOL_TYPE
-#else
-  ERROR(bool predefined)
-#endif
-#ifndef true
+// #define GLOBAL_DEFINE_BOOL 
+#ifdef GLOBAL_DEFINE_BOOL 
+  #define bool GLOBAL_BOOL_TYPE
 	#define true 1
-#endif
-#ifndef false
 	#define false 0
 #endif
 
