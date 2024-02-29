@@ -143,7 +143,8 @@ typedef enum pf_bg
 #define P_S16(v) 	    P_SIGNED(v) 
 #define P_S8(v) 	    P_SIGNED(v) 
 #define P_UNSIGNED(v) PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %u\n", (v)); PF_IF_LOC()
-#define P_U64(u)      printf("|%s| %"PRId64"\n", #u, u)
+// #define P_U64(u)      printf("|%s| %"PRId64"\n", #u, u)
+#define P_U64(v)      PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %"PRId64"\n", (v)); PF_IF_LOC()
 #define P_U32(v)      P_UNSIGNED(v)
 #define P_U16(v)      P_UNSIGNED(v)
 #define P_U8(v)       P_UNSIGNED(v)
@@ -219,8 +220,11 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 
 
 // @DOC: print the currently in use version of c
+#ifdef __STDC_VERSION__
 #define P_C_VERSION()                     \
-  if (__STDC_VERSION__ >=  201710L)       \
+  if (__STDC_VERSION__ >  201710L)        \
+  { PF("-- using c23 --\n"); }            \
+  else if (__STDC_VERSION__ >=  201710L)  \
   { PF("-- using c18 --\n"); }            \
   else if (__STDC_VERSION__ >= 201112L)   \
   { PF("-- using c11 --\n"); }            \
@@ -228,6 +232,9 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
   { PF("-- using c99 --\n"); }            \
   else                                    \
   { PF("-- using c89/c90 --\n"); }
+#else  // __STDC_VERSION__
+#define P_C_VERSION()   P_ERR("compiler doesnt define __STDC_VERSION__\n");
+#endif // __STDC_VERSION__
 
 #else // GLOBAL_DEBUG --------------------------------------------------------------------------------------
 
@@ -292,6 +299,19 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define ERR_CHECK(c, ...) if(!(c)) { ERR(__VA_ARGS__); }
 // @DOC: print an error with location, and custom message if the condition c if false, without stopping the execution
 #define P_ERR_CHECK(c, ...) if(!(c)) { P_ERR(__VA_ARGS__); }
+
+// -- static assert --
+#ifdef __STDC_VERSION__
+    #if __STDC_VERSION__ > 201710L  // c23
+    #define STATIC_ASSERT(...) static_assert(__VA_ARGS__)
+    #elif __STDC_VERSION__ >= 201112L // c11, c18
+    #define STATIC_ASSERT(...) _Static_assert(__VA_ARGS__)
+    #else  // c99 or c89, no static_assert
+    #define STATIC_ASSERT(...) P_ERR("c99/c89 doesnt support static assertion.\n") 
+    #endif
+#else   //  __STDC_VERSION__
+#define STATIC_ASSERT(...) P_ERR("compiler doesnt support static assertion.\n") 
+#endif  //  __STDC_VERSION__
 
 // #define P_ERR(...)	  
 // #define ASSERT(c)     
