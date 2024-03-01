@@ -161,7 +161,120 @@ typedef enum pf_bg
 
 #define P_PTR(v) 	    PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %p\n", (v)); PF_IF_LOC()
 
-#define P_V() error todo use _Generic
+// #define P_V(v) _Generic((v),                              \x
+//         _Bool: "bool",                                    \x
+//         char: "char",                                     \x
+//         signed char: "signed char",                       \x
+//         unsigned char: "unsigned char",                   \x
+//         short int: "short int",                           \x
+//         unsigned short int: "unsigned short int",         \x
+//         int: "int",                                       \x
+//         unsigned int: "unsigned int",                     \x
+//         long int: "long int",                             \x
+//         unsigned long int: "unsigned long int",           \x
+//         long long int: "long long int",                   \x
+//         unsigned long long int: "unsigned long long int", \x
+//         float: "float",                                   \x
+//         double: "double",                                 \x
+//         long double: "long double",                       \x
+//         char *: "pointer to char",                        \x
+//         void *: "pointer to void",                        \x
+//         int *: "pointer to int",                          \x
+//         default: "other")
+
+#define STR_TYPE(v) _Generic((v),                \
+        bool:     "bool",                        \
+        u8:       "u8",                          \
+        u16:      "u16",                         \
+        u32:      "u32",                         \
+        u64:      "u64",                         \
+        s8:       "s8",                          \
+        s16:      "s16",                         \
+        s32:      "s32",                         \
+        s64:      "s64",                         \
+        f32:      "f32",                         \
+        f64:      "f64",                         \
+        void*:    "void*",                       \
+        bool*:    "bool*",                       \
+        u8*:      "u8*",                         \
+        u16*:     "u16*",                        \
+        u32*:     "u32*",                        \
+        u64*:     "u64*",                        \
+        s8*:      "s8*",                         \
+        s16*:     "s16*",                        \
+        s32*:     "s32*",                        \
+        s64*:     "s64*",                        \
+        f32*:     "f32*",                        \
+        f64*:     "f64*",                        \
+        default:  "other")
+
+// @DOC: P_V(var) prints variable type-generic
+//       s32 i = 123; P_V(i);
+//       -> s32|i: 123
+INLINE void __P_UNKNOWN(const char* name, const char* type, ...)     {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": UNKNOWN TYPE\n");             PF_IF_LOC(); }
+INLINE void __P_BOOL(const char* name, const char* type, bool v)     {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %s\n", v ? "true" : "false"); PF_IF_LOC(); }
+INLINE void __P_UNSIGNED(const char* name, const char* type, u32 v)  {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %u\n", v);                    PF_IF_LOC(); }
+INLINE void __P_U64(const char* name, const char* type, u64 v)       {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %"PRId64"\n", v);             PF_IF_LOC(); }
+INLINE void __P_SIGNED(const char* name, const char* type, s32 v)    {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %d\n", v);                    PF_IF_LOC(); }
+INLINE void __P_FLOAT(const char* name, const char* type, f64 v) 	   {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %f\n", v);                    PF_IF_LOC(); }
+INLINE void __P_POINTER(const char* name, const char* type, void* v) {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %p\n", v);                    PF_IF_LOC(); }
+#define P_V(v) _Generic((v),                        \
+        bool:     __P_BOOL,                         \
+        u8:       __P_UNSIGNED,                     \
+        u16:      __P_UNSIGNED,                     \
+        u32:      __P_UNSIGNED,                     \
+        u64:      __P_U64,                          \
+        s8:       __P_SIGNED,                       \
+        s16:      __P_SIGNED,                       \
+        s32:      __P_SIGNED,                       \
+        f32:      __P_FLOAT,                        \
+        f64:      __P_FLOAT,                        \
+        void*:    __P_POINTER,                      \
+        bool*:    __P_POINTER,                      \
+        u8*:      __P_POINTER,                      \
+        u16*:     __P_POINTER,                      \
+        u32*:     __P_POINTER,                      \
+        u64*:     __P_POINTER,                      \
+        s8*:      __P_POINTER,                      \
+        s16*:     __P_POINTER,                      \
+        s32*:     __P_POINTER,                      \
+        s64*:     __P_POINTER,                      \
+        f32*:     __P_POINTER,                      \
+        f64*:     __P_POINTER,                      \
+        default:  __P_UNKNOWN)(#v, STR_TYPE(v), v)
+
+// @DOC: test P_V() and STR_TYPE() macros
+INLINE void TEST_P_V()
+{
+    u8  _u8  = 128; u16 _u16 = 12345;
+  u32 _u32 = 12345678; u64 _u64 = 123456778910111213;
+  s8  _s8  = -126; s16 _s16 = -12345;
+  s32 _s32 = -12345678; s64 _s64 = -123456778910111213;
+  f32 _f32 = 1.23456f; f64 _f64 = 123.4567891011;
+  bool  _bool  = true; _Bool __Bool = true;
+  
+  void* _voidp = NULL; u8*   _u8p   = &_u8; 
+  u16*  _u16p  = &_u16; u32*  _u32p  = &_u32;
+  u64*  _u64p  = &_u64; s8*   _s8p   = &_s8;
+  s16*  _s16p  = &_s16; s32*  _s32p  = &_s32;
+  s64*  _s64p  = &_s64; f32*  _f32p  = &_f32;
+  f64*  _f64p  = &_f64; bool* _boolp = &_bool;
+
+  P_STR(STR_TYPE(_u8)); P_STR(STR_TYPE(_u16)); P_STR(STR_TYPE(_u32)); P_STR(STR_TYPE(_u64));
+  P_STR(STR_TYPE(_s8)); P_STR(STR_TYPE(_s16)); P_STR(STR_TYPE(_s32)); P_STR(STR_TYPE(_s64));
+  P_STR(STR_TYPE(_f32));  P_STR(STR_TYPE(_f64)); P_STR(STR_TYPE(_bool)); P_STR(STR_TYPE(__Bool));
+
+  P_STR(STR_TYPE(_voidp)); P_STR(STR_TYPE(_u8p)); P_STR(STR_TYPE(_u16p)); P_STR(STR_TYPE(_u32p));
+  P_STR(STR_TYPE(_u64p)); P_STR(STR_TYPE(_s8p));  P_STR(STR_TYPE(_s16p)); P_STR(STR_TYPE(_s32p));
+  P_STR(STR_TYPE(_s64p)); P_STR(STR_TYPE(_f32p)); P_STR(STR_TYPE(_f64p)); P_STR(STR_TYPE(_boolp));
+
+  P_V(_bool); P_V(_u8); P_V(_u16); P_V(_u32); P_V(_u64); 
+  P_V(_s8); P_V(_s16); P_V(_s32); P_V(_s64); P_V(_f32); P_V(_f64);
+
+  P_V(_voidp); P_V(_boolp); P_V(_u8p); P_V(_u16p); P_V(_u32p); P_V(_u64p); 
+  P_V(_s8p); P_V(_s16p); P_V(_s32p); P_V(_s64p); P_V(_f32p); P_V(_f64p);
+  int _int = 12434; P_V(_int); float _float = 123.456f; P_V(_float);
+}
 
 // always print location
 
