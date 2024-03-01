@@ -161,6 +161,8 @@ typedef enum pf_bg
 
 #define P_PTR(v) 	    PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %p\n", (v)); PF_IF_LOC()
 
+#define P_V() error todo use _Generic
+
 // always print location
 
 #define P_LOC_INT(v)  P_INT(v);  P_LOCATION()
@@ -301,6 +303,8 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define P_ERR_CHECK(c, ...) if(!(c)) { P_ERR(__VA_ARGS__); }
 
 // -- static assert --
+// STATIC_ASSERT(MACRO >= 3);
+// STATIC_ASSERT(MACRO >= 3, "error message");
 #ifdef __STDC_VERSION__
     #if __STDC_VERSION__ > 201710L  // c23
     #define STATIC_ASSERT(...) static_assert(__VA_ARGS__)
@@ -313,11 +317,28 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define STATIC_ASSERT(...) P_ERR("compiler doesnt support static assertion.\n") 
 #endif  //  __STDC_VERSION__
 
+// @DOC: turn macro input to string
+#define STR_VAR(v)        (#v)    // @TODO: deprecate
+#define TO_STR(v)         #v
+#define EXPAND_TO_STR(v)  TO_STR(v)
+// @DOC: turn bool to string
+#define STR_BOOL(v) ((v) ? "true" : "false")
+// @DOC: paste, aka. expand and combine macros
+#define PASTE(a, b)                       a##b
+#define PASTE_2(a, b)                     PASTE(a, b)
+#define PASTE_3(a, b, c)                  PASTE_2(PASTE_2(a, b), c)
+#define PASTE_4(a, b, c, d)               PASTE_2(PASTE_3(a, b, c), d)
+#define PASTE_5(a, b, c, d, e)            PASTE_2(PASTE_4(a, b, c, d), e)
+#define PASTE_6(a, b, c, d, e, f)         PASTE_2(PASTE_5(a, b, c, d, e), f)
+#define PASTE_7(a, b, c, d, e, f, g)      PASTE_2(PASTE_6(a, b, c, d, e, f), g)
+#define PASTE_8(a, b, c, d, e, f, g, h)   PASTE_2(PASTE_7(a, b, c, d, e, f, g), h)
+
 // #define P_ERR(...)	  
 // #define ASSERT(c)     
 // #define ERR(...)      
 // #define ERR_CHECK(c, ...)   
 // #define P_ERR_CHECK(c, ...) 
+
 
 #ifdef __cplusplus
 } // extern C

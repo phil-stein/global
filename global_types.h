@@ -112,18 +112,6 @@ typedef void (empty_callback)(void);
 #define REMOVE_FLAG(a, b) ((a) &= ~(b))
 
 
-// @DOC: turn macro input to string
-#define STR_VAR(v)        (#v)    // @TODO: deprecate
-#define TO_STR(v)         #v
-#define EXPAND_TO_STR(v)  TO_STR(v)
-// @DOC: turn bool to string
-#define STR_BOOL(v) ((v) ? "true" : "false")
-// @DOC: paste, aka. expand and combine macros
-#define PASTE(a, b)           a##b
-#define PASTE_2(a, b)         PASTE(a, b)
-#define PASTE_3(a, b, c)      PASTE_2(PASTE_2(a, b), c)
-#define PASTE_4(a, b, c, d)   PASTE_2(PASTE_3(a, b, c), d)
-
 
 
 #ifdef __cplusplus
