@@ -94,14 +94,17 @@ typedef enum pf_bg
 // -- print --
 
 // @DOC: print location, as in file and line, append anywhere that info is usefull
-#define P_LOCATION() PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); _PF(" -> file: %s\n -> func: %s, line: %d\n", __FILE__, __func__, __LINE__); PF_STYLE_RESET()
+#define _P_LOCATION(_file, _func, _line) PF_STYLE(PF_DIM, PF_WHITE); PF_STYLE(PF_ITALIC, PF_WHITE); _PF(" -> file: %s\n -> func: %s, line: %d\n", _file, _func, _line); PF_STYLE_RESET()
+#define P_LOCATION() _P_LOCATION(__FILE__, __func__, __LINE__)
 // @DOC: print location on all P_ macros or not
 //       PF_IF_LOC() used in P/PF macros
 // #define PF_PRINT_LOCATION
 #ifdef PF_PRINT_LOCATION
   #define PF_IF_LOC() P_LOCATION() 
+  #define _PF_IF_LOC(_file, _func, _line) _P_LOCATION(_file, _func, _line) 
 #else
   #define PF_IF_LOC()
+  #define _PF_IF_LOC(_file, _func, _line)  
 #endif
 
 
@@ -211,13 +214,14 @@ typedef enum pf_bg
 // @DOC: P_V(var) prints variable type-generic
 //       s32 i = 123; P_V(i);
 //       -> s32|i: 123
-INLINE void __P_UNKNOWN(const char* name, const char* type, ...)     {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": UNKNOWN TYPE\n");             PF_IF_LOC(); }
-INLINE void __P_BOOL(const char* name, const char* type, bool v)     {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %s\n", v ? "true" : "false"); PF_IF_LOC(); }
-INLINE void __P_UNSIGNED(const char* name, const char* type, u32 v)  {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %u\n", v);                    PF_IF_LOC(); }
-INLINE void __P_U64(const char* name, const char* type, u64 v)       {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %"PRId64"\n", v);             PF_IF_LOC(); }
-INLINE void __P_SIGNED(const char* name, const char* type, s32 v)    {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %d\n", v);                    PF_IF_LOC(); }
-INLINE void __P_FLOAT(const char* name, const char* type, f64 v) 	   {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %f\n", v);                    PF_IF_LOC(); }
-INLINE void __P_POINTER(const char* name, const char* type, void* v) {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %p\n", v);                    PF_IF_LOC(); }
+INLINE void __P_UNKNOWN(const char* _file, const char* _func, const int _line, const char* name, const char* type, ...)     {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": UNKNOWN TYPE\n");             _PF_IF_LOC(_file, _func, _line); }
+INLINE void __P_BOOL(   const char* _file, const char* _func, const int _line, const char* name, const char* type, bool v)  {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %s\n", v ? "true" : "false"); _PF_IF_LOC(_file, _func, _line); }
+INLINE void __P_UNSIGNED(const char* _file, const char* _func, const int _line, const char* name, const char* type, u32 v)   {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %u\n", v);                    _PF_IF_LOC(_file, _func, _line); }
+INLINE void __P_U64(    const char* _file, const char* _func, const int _line, const char* name, const char* type, u64 v)   {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %"PRId64"\n", v);             _PF_IF_LOC(_file, _func, _line); }
+INLINE void __P_SIGNED( const char* _file, const char* _func, const int _line, const char* name, const char* type, s32 v)   {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %d\n", v);                    _PF_IF_LOC(_file, _func, _line); }
+INLINE void __P_S64(    const char* _file, const char* _func, const int _line, const char* name, const char* type, s64 v)   {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %lld\n", v);                  _PF_IF_LOC(_file, _func, _line); }
+INLINE void __P_FLOAT(  const char* _file, const char* _func, const int _line, const char* name, const char* type, f64 v) 	{PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %f\n", v);                    _PF_IF_LOC(_file, _func, _line); }
+INLINE void __P_POINTER(const char* _file, const char* _func, const int _line, const char* name, const char* type, void* v) {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %p\n", v);                    _PF_IF_LOC(_file, _func, _line); }
 #define P_V(v) _Generic((v),                        \
         bool:     __P_BOOL,                         \
         u8:       __P_UNSIGNED,                     \
@@ -227,6 +231,7 @@ INLINE void __P_POINTER(const char* name, const char* type, void* v) {PF_COLOR(P
         s8:       __P_SIGNED,                       \
         s16:      __P_SIGNED,                       \
         s32:      __P_SIGNED,                       \
+        s64:      __P_S64,                          \
         f32:      __P_FLOAT,                        \
         f64:      __P_FLOAT,                        \
         void*:    __P_POINTER,                      \
@@ -241,7 +246,7 @@ INLINE void __P_POINTER(const char* name, const char* type, void* v) {PF_COLOR(P
         s64*:     __P_POINTER,                      \
         f32*:     __P_POINTER,                      \
         f64*:     __P_POINTER,                      \
-        default:  __P_UNKNOWN)(#v, STR_TYPE(v), v)
+        default:  __P_UNKNOWN)(__FILE__, __func__, __LINE__, #v, STR_TYPE(v), v)
 
 // @DOC: test P_V() and STR_TYPE() macros
 INLINE void TEST_P_V()
