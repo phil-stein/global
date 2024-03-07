@@ -38,6 +38,8 @@ extern "C" {
 
 // @DOC: print an error with location, without stopping the execution
 #define P_ERR(...)	PF_COLOR(PF_RED); _PF("[ERROR] "); PF_MODE_RESET(); _PF(__VA_ARGS__); P_LOCATION()
+// @DOC: print an error with location, without stopping the execution, doesnt print location
+#define _P_ERR(...)	PF_COLOR(PF_RED); _PF("[ERROR] "); PF_MODE_RESET(); _PF(__VA_ARGS__)
 // @DOC: print an error with location if the condition c if false, stopping the execution
 #define ASSERT(c)   if(!(c)) { PF_COLOR(PF_RED); _PF("[ASSERT]" ); PF_MODE_RESET(); _PF("'%s'\n", #c); P_LOCATION(); abort(); }
 // @DOC: print an error with location, stopping the execution
