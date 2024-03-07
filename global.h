@@ -154,8 +154,9 @@ extern "C" {
 
 // @DOC: wrappers around standard functions to make the safer, can be compiled out
 
-#define SPRINTF(max, ...)        ASSERT(sprintf(__VA_ARGS__) < (max))                   
-#define STRCPY(dest, source)     ASSERT(strcpy(dest, source) != NULL)
+#define SPRINTF(max, ...)           ASSERT(sprintf(__VA_ARGS__) < (max))                   
+#define STRCPY(dest, source)        ASSERT(strcpy(dest, source) != NULL)
+#define STRNCPY(dest, source, len)  ASSERT(strncpy(dest, source, len) != NULL)
 
 #define MALLOC(ptr, size)        (ptr) = malloc(size);        ASSERT((ptr) != NULL)     
 #define CALLOC(ptr, items, size) (ptr) = calloc(items, size); ASSERT((ptr) != NULL)     
