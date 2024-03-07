@@ -228,6 +228,21 @@ typedef enum pf_bg
 
 #define P_PTR(v) 	    PF_COLOR(PF_CYAN); _PF("%s", #v); PF_STYLE_RESET(); _PF(": %p\n", (v)); PF_IF_LOC()
 
+// @DOC: print member of a flag, i.e. P_FLAG_MEMBER(my_flag, MY_FLAG_ENUM) -> get printed red/green
+//       used for printting whole flags possible flags i.e.:
+//       INLINE void audio_print_my_flag(ma_sound_flags f, const char* name, const char* _file, const char* _func, const int _line)
+//       {
+//         PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(":\n");
+//         P_FLAG_MEMBER(f, MY_ENUM_01);
+//         P_FLAG_MEMBER(f, MY_ENUM_02);
+//         P_FLAG_MEMBER(f, MY_ENUM_02);
+//         _PF("\n");
+//         _PF_IF_LOC(_file, _func, _line);
+//       }
+//       #define P_MY_FLAG(_f) audio_print_my_flag(_f, #_f, __FILE__, __func__, __LINE__)
+#define P_FLAG_MEMBER(_f, _flag)     PF_COLOR(HAS_FLAG(_f, _flag)  ? PF_GREEN : PF_RED); _PF("%s", #_flag); PF_STYLE_RESET(); _PF(" | ")
+
+
 // #define P_V(v) _Generic((v),                              \x
 //         _Bool: "bool",                                    \x
 //         char: "char",                                     \x
