@@ -1,8 +1,6 @@
 #ifndef GLOBAL_IO_UTIL_H
 #define GLOBAL_IO_UTIL_H
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -48,4 +46,4 @@ void io_util_get_console_size_win(int* w, int* h)
 } // extern C
 #endif
 
-#endif  // IO_UTIL_IMPLEMENTATION
+#endif // IO_UTIL_IMPLEMENTATION

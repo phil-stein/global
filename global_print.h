@@ -36,16 +36,16 @@ extern "C" {
 
 // always have these macros
 
-// @DOC: print an error with location, without stopping the execution
-#define P_ERR(...)	PF_COLOR(PF_RED); _PF("[ERROR] "); PF_MODE_RESET(); _PF(__VA_ARGS__); P_LOCATION()
 // @DOC: print an error with location, without stopping the execution, doesnt print location
 #define _P_ERR(...)	PF_COLOR(PF_RED); _PF("[ERROR] "); PF_MODE_RESET(); _PF(__VA_ARGS__)
+// @DOC: print an error with location, without stopping the execution
+#define P_ERR(...)	_P_ERR(__VA_ARGS__); P_LOCATION()
 // @DOC: print an error with location if the condition c if false, stopping the execution
 #define ASSERT(c)   if(!(c)) { PF_COLOR(PF_RED); _PF("[ASSERT]" ); PF_MODE_RESET(); _PF("'%s'\n", #c); P_LOCATION(); abort(); }
 // @DOC: print an error with location, stopping the execution
 #define ERR(...)  P_ERR(__VA_ARGS__); abort();
 // @DOC: print an error with location, and custom message if the condition c if false, stopping the execution
-#define ERR_CHECK(c, ...) if(!(c)) { ERR(__VA_ARGS__); }
+#define ERR_CHECK(c, ...) if(!(c)) { _P_ERR("\033[1;37m[[ %s ]]\033[0;37m\n", #c); _PF("        "); _PF(__VA_ARGS__); P_LOCATION(); abort(); }
 // @DOC: print an error with location, and custom message if the condition c if false, without stopping the execution
 #define P_ERR_CHECK(c, ...) if(!(c)) { P_ERR(__VA_ARGS__); }
 
@@ -69,6 +69,35 @@ extern "C" {
 #define EXPAND_TO_STR(v)  TO_STR(v)
 // @DOC: turn bool to string
 #define STR_BOOL(v) ((v) ? "true" : "false")
+#define STR_TYPE(v) _Generic((v),                \
+        bool:           "bool",                  \
+        u8:             "u8",                    \
+        u16:            "u16",                   \
+        u32:            "u32",                   \
+        u64:            "u64",                   \
+        s8:             "s8",                    \
+        s16:            "s16",                   \
+        s32:            "s32",                   \
+        s64:            "s64",                   \
+        f32:            "f32",                   \
+        f64:            "f64",                   \
+        long:           "long",                  \
+        unsigned long:  "unsigned long",         \
+        void*:          "void*",                 \
+        bool*:          "bool*",                 \
+        u8*:            "u8*",                   \
+        u16*:           "u16*",                  \
+        u32*:           "u32*",                  \
+        u64*:           "u64*",                  \
+        s8*:            "s8*",                   \
+        s16*:           "s16*",                  \
+        s32*:           "s32*",                  \
+        s64*:           "s64*",                  \
+        f32*:           "f32*",                  \
+        f64*:           "f64*",                  \
+        long*:          "long*",                 \
+        unsigned long*: "unsigned long*",        \
+        default:        "other")
 // @DOC: paste, aka. expand and combine macros
 #define PASTE(a, b)                       a##b
 #define PASTE_2(a, b)                     PASTE(a, b)
@@ -265,36 +294,6 @@ typedef enum pf_bg
 //         void *: "pointer to void",                        \x
 //         int *: "pointer to int",                          \x
 //         default: "other")
-
-#define STR_TYPE(v) _Generic((v),                \
-        bool:           "bool",                  \
-        u8:             "u8",                    \
-        u16:            "u16",                   \
-        u32:            "u32",                   \
-        u64:            "u64",                   \
-        s8:             "s8",                    \
-        s16:            "s16",                   \
-        s32:            "s32",                   \
-        s64:            "s64",                   \
-        f32:            "f32",                   \
-        f64:            "f64",                   \
-        long:           "long",                  \
-        unsigned long:  "unsigned long",         \
-        void*:          "void*",                 \
-        bool*:          "bool*",                 \
-        u8*:            "u8*",                   \
-        u16*:           "u16*",                  \
-        u32*:           "u32*",                  \
-        u64*:           "u64*",                  \
-        s8*:            "s8*",                   \
-        s16*:           "s16*",                  \
-        s32*:           "s32*",                  \
-        s64*:           "s64*",                  \
-        f32*:           "f32*",                  \
-        f64*:           "f64*",                  \
-        long*:          "long*",                 \
-        unsigned long*: "unsigned long*",        \
-        default:        "other")
 
 // @DOC: P_V(var) prints variable type-generic
 //       s32 i = 123; P_V(i);
@@ -556,17 +555,19 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 // @DOC: compile out all GLOBAL_DEBUG macros
 
 #define _PF(...)	                	
-#define PF_MODE(style, fg, bg)   
-#define PF_STYLE(style, color)   
-#define PF_COLOR(color)          
+#define PF_MODE(...)   
+#define PF_STYLE(...)   
+#define PF_COLOR(...)          
 #define PF_MODE_RESET()          
 #define PF_STYLE_RESET()         
 #define P_LOCATION()             
 #define PF_IF_LOC()
+#define _PF_IF_LOC(...)  
 #define PF(...)		                	
-#define P(msg)
+#define P(...)
 #define P_INFO(...)   
 #define P_LINE()
+#define P_LINE_STR(...)
 
 #define P_SIGNED(v) 	
 #define P_INT(v) 	    
@@ -586,8 +587,13 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define F32_NAN(v)  
 #define P_NAN(v)    
 
+#define P_V(...)
+
 #define GLOBAL_TEST_P_MACROS()
 #define P_C_VERSION()                     
+#define P_COMPILER_VERSION() 
+
+#define P_FLAG_MEMBER(...)
 
 #define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c"
 #define BYTE_TO_BINARY(byte)   \
