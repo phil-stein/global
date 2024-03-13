@@ -44,12 +44,11 @@ extern "C" {
 #endif
 
 // -- bool --
-#ifndef GLOBAL_BOOL_TYPE
-  #define GLOBAL_BOOL_TYPE char
-#endif
-
 // #define GLOBAL_DEFINE_BOOL 
 #ifdef GLOBAL_DEFINE_BOOL 
+  #ifndef GLOBAL_BOOL_TYPE
+    #define GLOBAL_BOOL_TYPE char
+  #endif
   #define bool GLOBAL_BOOL_TYPE
 	#define true 1
 	#define false 0

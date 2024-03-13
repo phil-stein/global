@@ -39,7 +39,7 @@ char* str_util_find_last_of(char* str, char* identifier)
   TRACE();
 
     char* last = NULL;
-    int n = strlen(identifier);
+    size_t n = strlen(identifier);
     while (*str)
     {
         // go through str and compare with identifier
@@ -56,9 +56,9 @@ char* str_util_trunc(char* str, int pos)
 {
   TRACE();
 
-    int len = strlen(str);
+    size_t len = strlen(str);
 
-    if (len > abs(pos)) 
+    if (len > (size_t)abs(pos)) 
     {
         if (pos > 0)
         {
@@ -66,7 +66,7 @@ char* str_util_trunc(char* str, int pos)
         }
         else
         {
-            str[len + pos] = '\0';
+            str[len + (size_t)pos] = '\0';
         }
     }
 
