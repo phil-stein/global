@@ -108,15 +108,39 @@ extern "C" {
 #define PASTE_7(a, b, c, d, e, f, g)      PASTE_2(PASTE_6(a, b, c, d, e, f), g)
 #define PASTE_8(a, b, c, d, e, f, g, h)   PASTE_2(PASTE_7(a, b, c, d, e, f, g), h)
 
+// --- FOR_EACH() ---
+// taken from: https://www.scs.stanford.edu/~dm/blog/va-opt.html
+#define PARENS ()
+#define EXPAND(...)  EXPAND4(EXPAND4(EXPAND4(EXPAND4(__VA_ARGS__))))
+#define EXPAND4(...) EXPAND3(EXPAND3(EXPAND3(EXPAND3(__VA_ARGS__))))
+#define EXPAND3(...) EXPAND2(EXPAND2(EXPAND2(EXPAND2(__VA_ARGS__))))
+#define EXPAND2(...) EXPAND1(EXPAND1(EXPAND1(EXPAND1(__VA_ARGS__))))
+#define EXPAND1(...) __VA_ARGS__
+// @DOC: execute macro for every var in __VA_ARGS__
+#define FOR_EACH(macro, ...)                                    \
+  __VA_OPT__(EXPAND(FOR_EACH_HELPER(macro, __VA_ARGS__)))
+#define FOR_EACH_HELPER(macro, a1, ...)                         \
+  macro(a1)                                                     \
+  __VA_OPT__(FOR_EACH_AGAIN PARENS (macro, __VA_ARGS__))
+#define FOR_EACH_AGAIN() FOR_EACH_HELPER
+
+
 // --- compile time: warning / message / error ---
 #define __PRAGMA_LOC__ __FILE__ ", line: "EXPAND_TO_STR(__LINE__)" " 
+#define _PRAGMA(x) _Pragma(#x)
+#define PRAGMA(x) _PRAGMA(x)
+
+#define DIAGNOSTIC_PUSH(warning)            \
+    PRAGMA(GCC diagnostic push)             \
+    PRAGMA(GCC diagnostic ignored #warning)   
+#define DIAGNOSTIC_POP()  PRAGMA(GCC diagnostic pop)
+
 #if defined(__GNUC__) || defined(__clang__)
-#define DO_PRAGMA(x) _Pragma (#x)
-#define _PRAGMA_MESSAGE(x)  DO_PRAGMA(message "[MESSAGE] " #x " -> "__PRAGMA_LOC__)
+#define _PRAGMA_MESSAGE(x)  PRAGMA(message "[MESSAGE] " #x " -> "__PRAGMA_LOC__)
 #define PRAGMA_MESSAGE(x)   _PRAGMA_MESSAGE(x)
-#define _PRAGMA_WARNING(x)  DO_PRAGMA(GCC warning "[WARNING] " #x " -> "__PRAGMA_LOC__)  
+#define _PRAGMA_WARNING(x)  PRAGMA(GCC warning "[WARNING] " #x " -> "__PRAGMA_LOC__)  
 #define PRAGMA_WARNING(x)   _PRAGMA_WARNING(x)  
-#define _PRAGMA_ERROR(x)    DO_PRAGMA(GCC error "[ERROR] " #x " -> "__PRAGMA_LOC__)  
+#define _PRAGMA_ERROR(x)    PRAGMA(GCC error "[ERROR] " #x " -> "__PRAGMA_LOC__)  
 #define PRAGMA_ERROR(x)     _PRAGMA_ERROR(x)  
 #endif // __GNUC__
 #if !defined(__clang__) && defined(_MSC_VER)
