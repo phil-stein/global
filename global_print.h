@@ -124,6 +124,8 @@ extern "C" {
   __VA_OPT__(FOR_EACH_AGAIN PARENS (macro, __VA_ARGS__))
 #define FOR_EACH_AGAIN() FOR_EACH_HELPER
 
+// @TODO:
+// make ENUM(...) macro
 
 // --- compile time: warning / message / error ---
 #define __PRAGMA_LOC__ __FILE__ ", line: "EXPAND_TO_STR(__LINE__)" " 
