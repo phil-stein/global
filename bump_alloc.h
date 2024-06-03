@@ -30,6 +30,7 @@ INLINE void bump_init_dbg(bump_alloc_t* alloc, u32 size, const char* _file, cons
   ERR_CHECK(alloc != NULL,       "alloc is null pointer\n\t->file. %s, line: %d\n", _file, _line);
   ERR_CHECK(alloc->data == NULL, "alloc->data isnt null pointer\n\t->file. %s, line: %d\n", _file, _line);
   ERR_CHECK(size > 0,            "size needs to be bigger than 0\n\t->file. %s, line: %d\n", _file, _line);
+  (void)_file; (void)_line;
 
   MALLOC(alloc->data, size);
   alloc->size = size;
@@ -54,6 +55,7 @@ INLINE void* bump_alloc_dbg(bump_alloc_t* alloc, u32 size, const char* _file, co
     return &alloc->data[alloc->pos];
   }
   ERR("bump_alloc ran out of memory\n\t->file. %s, line: %d\n", _file, _line);
+  (void)_file; (void)_line;
   return NULL;
 }
 
@@ -68,6 +70,7 @@ INLINE void bump_reset_dbg(bump_alloc_t* alloc, const char* _file, const int _li
   TRACE();
 
   ERR_CHECK(alloc != NULL, "alloc is null pointer\n\t->file. %s, line: %d\n", _file, _line);
+  (void)_file; (void)_line;
   alloc->pos = 0;
 }
 
@@ -83,6 +86,7 @@ INLINE void bump_free_dbg(bump_alloc_t* alloc, const char* _file, const int _lin
 
   ERR_CHECK(alloc != NULL,       "alloc is null pointer\n\t->file. %s, line: %d\n", _file, _line);
   ERR_CHECK(alloc->data != NULL, "alloc->data is null pointer, call bump_init() first\n\t->file. %s, line: %d\n", _file, _line);
+  (void)_file; (void)_line;
 
   FREE(alloc->data);
   alloc->data = NULL;
