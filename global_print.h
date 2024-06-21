@@ -36,18 +36,39 @@ extern "C" {
 
 // always have these macros
 
+// @DOC: print location, as in file and line, append anywhere that info is usefull
+#define ___P_LOCATION(_file, _func, _line) printf(" -> file: %s\n -> func: %s, line: %d\n", _file, _func, _line); 
+#define __P_LOCATION() ___P_LOCATION(__FILE__, __func__, __LINE__)
+
 // @DOC: print an error with location, without stopping the execution, doesnt print location
-#define _P_ERR(...)	PF_COLOR(PF_RED); _PF("[ERROR] "); PF_MODE_RESET(); _PF(__VA_ARGS__)
+#define _P_ERR(...)	PF_COLOR(PF_RED); printf("[ERROR] "); PF_MODE_RESET(); printf(__VA_ARGS__)
 // @DOC: print an error with location, without stopping the execution
-#define P_ERR(...)	_P_ERR(__VA_ARGS__); P_LOCATION()
+#define P_ERR(...)	_P_ERR(__VA_ARGS__); __P_LOCATION()
 // @DOC: print an error with location if the condition c if false, stopping the execution
-#define ASSERT(c)   if(!(c)) { PF_COLOR(PF_RED); _PF("[ASSERT]" ); PF_MODE_RESET(); _PF("'%s'\n", #c); P_LOCATION(); abort(); }
+#define ASSERT(c)   if(!(c)) { PF_COLOR(PF_RED); printf("[ASSERT]" ); PF_MODE_RESET(); printf("'%s'\n", #c); __P_LOCATION(); abort(); }
 // @DOC: print an error with location, stopping the execution
 #define ERR(...)  P_ERR(__VA_ARGS__); abort();
 // @DOC: print an error with location, and custom message if the condition c if false, stopping the execution
-#define ERR_CHECK(c, ...) if(!(c)) { _P_ERR("\033[1;37m[[ %s ]]\033[0;37m\n", #c); _PF("        "); _PF(__VA_ARGS__); P_LOCATION(); abort(); }
+#define ERR_CHECK(c, ...) if(!(c)) { _P_ERR("\033[1;37m[[ %s ]]\033[0;37m\n", #c); printf("        "); printf(__VA_ARGS__); __P_LOCATION(); abort(); }
 // @DOC: print an error with location, and custom message if the condition c if false, without stopping the execution
 #define P_ERR_CHECK(c, ...) if(!(c)) { P_ERR(__VA_ARGS__); }
+
+#define _P_ASSERT_FIX(...)	PF_COLOR(PF_RED); printf("[ASSERT_FIX] "); PF_MODE_RESET(); printf(__VA_ARGS__)
+// @DOC: print an error with location, and custom message if the condition c if false, 
+//       if ASSERT_FIX_USE_FIX is defined abort() otherwise then execute code block in ... aka. __VA_ARGS__
+//       example:
+//        int arr[3];
+//        int i = 10;
+//        ASSERT_FIX(i < 3, 
+//          i = 0;
+//        )
+//        arr[i] = 123;
+#ifdef ASSERT_FIX_USE_FIX
+  #define ASSERT_FIX(c, ...)                                                                                     \
+    if(!(c)) { _P_ASSERT_FIX("\033[1;37m[[ %s ]]\033[0;37m\n", #c); __P_LOCATION(); __VA_ARGS__ }
+#else
+  #define ASSERT_FIX(c, ...) if(!(c)) { _P_ASSERT_FIX("\033[1;37m[[ %s ]]\033[0;37m\n", #c); __P_LOCATION(); abort(); }
+#endif
 
 // -- static assert --
 // STATIC_ASSERT(MACRO >= 3);
