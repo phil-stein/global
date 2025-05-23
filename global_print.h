@@ -28,6 +28,7 @@
 
 // libs needed basically everywhere
 #include <math.h>
+#include <stdio.h>
 #include "global_types.h"
 
 #ifdef __cplusplus
@@ -226,7 +227,7 @@ typedef enum pf_bg
 #define PF_MODE(style, fg, bg)   _PF("\033[%d;%d;%dm", style, fg, bg)
 // @DOC: setting terminal output to a specific mode and text color
 #define PF_STYLE(style, color)   _PF("\033[%d;%dm", style, color)
-// @DOC: setting terminal output to a specific text color
+// @DOC: setting terminal output to a specific text color // PF_MODE(PF_NORMAL, color, PF_BG_BLACK)
 #define PF_COLOR(color)          PF_STYLE(PF_NORMAL, color)
 // @DOC: setting terminal output to default mode, text and background color
 #define PF_MODE_RESET()          PF_MODE(PF_NORMAL, PF_WHITE, PF_BG_BLACK)
@@ -349,7 +350,16 @@ typedef enum pf_bg
 INLINE void _name(const char* _file, const char* _func, const int _line, const char* name, const char* type, _type v)                 \
 {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %"_pf_type"\n", v); _PF_IF_LOC(_file, _func, _line); }
 
+#ifdef _MSC_VER // gcc doesnt knwo this warning, GCC diagnostic push works in clang/msvc too
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#else
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
+
 INLINE void __P_UNKNOWN(const char* _file, const char* _func, const int _line, const char* name, const char* type, ...)     {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": UNKNOWN TYPE\n");             _PF_IF_LOC(_file, _func, _line); }
+
 INLINE void __P_BOOL(   const char* _file, const char* _func, const int _line, const char* name, const char* type, bool v)  {PF_COLOR(PF_YELLOW); _PF("%s", type); PF_COLOR(PF_WHITE); _PF("|"); PF_COLOR(PF_CYAN); _PF("%s", name); PF_STYLE_RESET(); _PF(": %s\n", v ? "true" : "false"); _PF_IF_LOC(_file, _func, _line); }
 __P_FUNC(__P_UNSIGNED,  u32,            "u")
 __P_FUNC(__P_U64,       u64,            PRId64)
@@ -597,6 +607,8 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
 #define P_COMPILER_VERSION()   P_ERR("compiler doesnt define __STDC_VERSION__\n");
 #endif // __STDC_VERSION__
 
+#pragma GCC diagnostic pop // "-Wunused-parameter" 
+
 #else // GLOBAL_DEBUG --------------------------------------------------------------------------------------
 
 // @DOC: compile out all GLOBAL_DEBUG macros
@@ -652,6 +664,7 @@ P_INT(int_32); P_S32(int_32); P_S16(int_16); P_S8(int_8); P_U32(uint_32); P_U16(
   ((byte) & 0x04 ? '1' : '0'), \
   ((byte) & 0x02 ? '1' : '0'), \
   ((byte) & 0x01 ? '1' : '0') 
+
 
 #endif // GLOBAL_DEBUG
 
