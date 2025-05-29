@@ -54,11 +54,13 @@ INLINE void* bump_alloc_dbg(bump_alloc_t* alloc, u32 size, const char* _file, co
     alloc->pos += size;
     return &alloc->data[alloc->pos];
   }
+  // @TODO: handle this 
   ERR("bump_alloc ran out of memory\n\t->file. %s, line: %d\n", _file, _line);
   (void)_file; (void)_line;
   return NULL;
 }
 
+// @TODO: make bump_walk_back() etc. func for walking back last alloc
 
 
 // @DOC: reset the bump allocator for reusage
