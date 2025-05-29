@@ -42,11 +42,11 @@ extern "C" {
 #define __P_LOCATION() ___P_LOCATION(__FILE__, __func__, __LINE__)
 
 // @DOC: print an error with location, without stopping the execution, doesnt print location
-#define _P_ERR(...)	PF_COLOR(PF_RED); printf("[ERROR] "); PF_MODE_RESET(); printf(__VA_ARGS__)
+#define _P_ERR(...)	PF_COLOR(PF_RED); printf("[ERROR] "); PF_STYLE_RESET(); printf(__VA_ARGS__)
 // @DOC: print an error with location, without stopping the execution
 #define P_ERR(...)	_P_ERR(__VA_ARGS__); __P_LOCATION()
 // @DOC: print an error with location if the condition c if false, stopping the execution
-#define ASSERT(c)   if(!(c)) { PF_COLOR(PF_RED); printf("[ASSERT]" ); PF_MODE_RESET(); printf("'%s'\n", #c); __P_LOCATION(); abort(); }
+#define ASSERT(c)   if(!(c)) { PF_COLOR(PF_RED); printf("[ASSERT]" ); PF_STYLE_RESET(); printf("'%s'\n", #c); __P_LOCATION(); abort(); }
 // @DOC: print an error with location, stopping the execution
 #define ERR(...)  P_ERR(__VA_ARGS__); abort();
 // @DOC: print an error with location, and custom message if the condition c if false, stopping the execution
@@ -54,7 +54,7 @@ extern "C" {
 // @DOC: print an error with location, and custom message if the condition c if false, without stopping the execution
 #define P_ERR_CHECK(c, ...) if(!(c)) { P_ERR(__VA_ARGS__); }
 
-#define _P_ASSERT_FIX(...)	PF_COLOR(PF_RED); printf("[ASSERT_FIX] "); PF_MODE_RESET(); printf(__VA_ARGS__)
+#define _P_ASSERT_FIX(...)	PF_COLOR(PF_RED); printf("[ASSERT_FIX] "); PF_STYLE_RESET(); printf(__VA_ARGS__)
 // @DOC: print an error with location, and custom message if the condition c if false, 
 //       if ASSERT_FIX_USE_FIX is defined abort() otherwise then execute code block in ... aka. __VA_ARGS__
 //       example:
