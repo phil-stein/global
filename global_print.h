@@ -187,13 +187,14 @@ extern "C" {
 // @DOC: used for setting terminal output to a specific mode, using PF_MODE(), PF_STYLE, etc.
 typedef enum pf_mode
 {
-  PF_NORMAL     = 0,
-  PF_BOLD       = 1,    // bright
-  PF_DIM        = 2,
-  PF_ITALIC     = 3,
-  PF_UNDERLINE  = 4,
-  PF_REVERSE    = 5,
-  PF_HIDDEN     = 6
+  PF_NORMAL        = 0,
+  PF_BOLD          = 1,    // bright
+  PF_DIM           = 2,
+  PF_ITALIC        = 3,
+  PF_UNDERLINE     = 4,
+  PF_REVERSE       = 5,
+  PF_HIDDEN        = 6,
+  PF_STRIKETHROUGH = 9,
 }pf_mode;
 // @DOC: used for setting terminal output to a specific text color, using PF_MODE(), PF_STYLE, etc.
 typedef enum pf_fg
